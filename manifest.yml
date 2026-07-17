@@ -1,0 +1,119 @@
+plugin:
+  name: presentation-pptx
+  url: https://github.com/programmfabrik/fylr-plugin-presentation-pptx
+  displayname:
+    en-US: "Presentation PPTX Export Plugin"
+    de-DE: "Präsentationen PPTX-Export Plugin"
+  info:
+    de-DE: |
+      Wandelt eine Collection in eine herunterladbare PowerPoint-Präsentation (PPTX) um. Nutzen Sie dieses Export-Plugin, wenn eine Auswahl von Datensätzen als fertige Foliensammlung statt als einfacher Export übergeben werden soll. Exportiert die Objekte einer Collection als PowerPoint-Datei (.pptx)
+    en-US: |
+      Turn a collection into a downloadable PowerPoint (PPTX) presentation. Use this export plugin when you want to hand off a selection of records as a ready-to-open slide deck instead of a plain export. Exports the objects of a collection as a PowerPoint (.pptx) file
+  version: "1"
+  vendor: Programmfabrik GmbH
+  server:
+    api-version:
+      require: 1
+  l10n: l10n/presentation-pptx.csv
+  webfrontend:
+    url: presentation-pptx.js
+
+  custom:
+    # Templates for python-pptx. The webfrontend reads this via getOpts() to
+    # offer the format choice; build_pptx.py uses it to place the content.
+    # slide_idx picks the layout inside the .pptx, the other numbers are
+    # placeholder indexes within that layout.
+    templates:
+      - name: default-white.pptx
+        # format: 16:9
+        slides: &default_slides
+          - type: "start"
+            slide_idx: 0
+            title: 0
+            subtitle: 1
+          - type: "start"
+            show_info: true
+            slide_idx: 0
+            title: 0
+            subtitle: 1
+          - type: "one"
+            slide_idx: 1
+            picture: 13
+          - type: "one"
+            show_info: true
+            slide_idx: 2
+            picture: 13
+            text: 14
+          - type: "duo"
+            slide_idx: 3
+            picture_left: 13
+            picture_right: 14
+          - type: "duo"
+            show_info: true
+            slide_idx: 4
+            picture_left: 13
+            picture_right: 14
+            text_left: 18
+            text_right: 19
+          - type: "bullets"
+            slide_idx: 5
+            title: 0
+            bullets: 18
+          - type: "bullets"
+            show_info: true
+            slide_idx: 5
+            title: 0
+            bullets: 18
+          - type: "imageText"
+            slide_idx: 4
+            picture_left: 13
+            text_left: 18
+            text_right: 14
+            text_box_to_remove: 19
+          - type: "imageText"
+            show_info: true
+            slide_idx: 4
+            picture_left: 13
+            text_left: 18
+            text_right: 14
+            text_box_to_remove: 19
+        placeholder: light.png # placeholder image for assets that have no valid image version
+
+      - name: default-black.pptx
+        # format: 16:9
+        slides: *default_slides
+        placeholder: dark.png
+
+      - name: default-white-4-3.pptx
+        # format: 4:3
+        slides: *default_slides
+        placeholder: light.png
+
+      - name: default-black-4-3.pptx
+        # format: 4:3
+        slides: *default_slides
+        placeholder: dark.png
+
+    qualities:
+      - 10000
+      - 1024
+      - 640
+
+base_url_prefix: webfrontend
+
+# The export callback: fylr runs the produce step through the python3 exec
+# service, handing the export info in as %info.json%.
+callbacks:
+  export:
+    create_pptx:
+      exec:
+        service: python3
+        commands:
+          - prog: python3
+            stdout:
+              type: body
+            args:
+              - type: value
+                value: "%_exec.pluginDir%/server/presentation_pptx_fylr.py"
+              - type: value
+                value: "%info.json%"

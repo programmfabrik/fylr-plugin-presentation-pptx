@@ -1,0 +1,25 @@
+# Build configuration for fylr-build-plugin — the explicit build description.
+# Delivered files are listed here; "check" (runs with every build) warns when
+# a manifest reference is missing from the build folder.
+# All features: https://github.com/programmfabrik/fylr-build-plugin
+
+server:
+  install:
+    - server
+    - l10n
+    # build_pptx.py resolves these relative to itself as ../../templates and
+    # ../../placeholders, so they have to stay at the root of the build folder.
+    - templates
+    - placeholders
+
+webfrontend:
+  # CoffeeScript 1.x, compiled + concatenated in this order into
+  # plugin.webfrontend.url (webfrontend/presentation-pptx.js)
+  coffee1:
+    - webfrontend/PresentationPowerpointDownloadManager.coffee
+
+# loca master. Pull with "make loca".
+loca:
+  - csv: l10n/presentation-pptx.csv
+    sheet: 1glXObMmIUd0uXxdFdiPWRZPLCx6qEUaxDfNnmttave4
+    gid: "1786140544"

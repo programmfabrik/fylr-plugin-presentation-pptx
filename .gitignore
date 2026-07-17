@@ -1,0 +1,6 @@
+/build
+*.coffee.js
+webfrontend/presentation-pptx.js
+*.pyc
+__pycache__/
+.DS_Store
